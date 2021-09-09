@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import classes from "./classes";
 
 export function activate(context: vscode.ExtensionContext) {
   const provider = vscode.languages.registerCompletionItemProvider("html", {
@@ -18,44 +19,32 @@ export function activate(context: vscode.ExtensionContext) {
         return [];
       }
 
-      const buttonClasses = [
-        "button",
-        "is-white",
-        "is-light",
-        "is-dark",
-        "is-black",
-        "is-text",
-        "is-ghost",
-        "is-primary",
-        "is-link",
-        "is-info",
-        "is-success",
-        "is-warning",
-        "is-danger",
-        "is-small",
-        "is-normal",
-        "is-medium",
-        "is-large",
-        "is-fullwidth",
-        "is-outlined",
-        "is-inverted",
-        "is-rounded",
-        "is-hovered",
-        "is-focused",
-        "is-active",
-        "is-loading",
-        "is-static",
-      ];
+    
+      const completions: vscode.CompletionItem[] = [];
 
-      const buttonCompletions = buttonClasses.map((buttonClass) => {
-        const completion = new vscode.CompletionItem(
-          buttonClass,
+      for (const key in classes) {
+        const modifiers: string[] = classes[key];
+        const rootCompletion = new vscode.CompletionItem(
+          key,
           vscode.CompletionItemKind.Variable
         );
-        return completion;
-      });
+        // a completion item that inserts its text as snippet,
+        // the `insertText`-property is a `SnippetString` which will be honored by the editor.
+        rootCompletion.insertText = new vscode.SnippetString(
+          `${key} \${1|${modifiers.join(",")}\|}`
+        );
+        completions.push(rootCompletion);
+        // create completions for class modifiers
+        modifiers.forEach((modifier) => {
+          const completion = new vscode.CompletionItem(
+            modifier,
+            vscode.CompletionItemKind.Variable
+          );
+          completions.push(completion);
+        });
+      }
 
-      return [...buttonCompletions];
+      return [...completions];
     },
   });
 
