@@ -1,7 +1,10 @@
 import * as vscode from "vscode";
 import { globalClasses, classes } from "./classes";
 
-export function activate(context: vscode.ExtensionContext) {
+const cssDisposable: vscode.Disposable[] = [];
+const configuration = "bulma-css-class-completion.enabled";
+
+function registerProvider(disposables: vscode.Disposable[]) {
   const provider = vscode.languages.registerCompletionItemProvider("html", {
     provideCompletionItems(
       document: vscode.TextDocument,
@@ -85,9 +88,43 @@ export function activate(context: vscode.ExtensionContext) {
         }
       }
 
+      disposables.push(provider);
+
       return [...completions];
     },
   });
+}
 
-  context.subscriptions.push(provider);
+function unregisterProvider(disposables: vscode.Disposable[]) {
+  disposables.forEach((disposable) => disposable.dispose());
+  disposables.length = 0;
+}
+
+export async function activate(
+  context: vscode.ExtensionContext
+): Promise<void> {
+  const disposables: vscode.Disposable[] = [];
+
+  vscode.workspace.onDidChangeConfiguration(
+    async (e) => {
+      if (e.affectsConfiguration(configuration)) {
+        const isEnabled = vscode.workspace
+          .getConfiguration()
+          .get<string>(configuration);
+        isEnabled
+          ? registerProvider(cssDisposable)
+          : unregisterProvider(cssDisposable);
+      }
+    },
+    null,
+    disposables
+  );
+
+  registerProvider(cssDisposable);
+
+  context.subscriptions.push(...disposables);
+}
+
+export function deactivate(): void {
+  unregisterProvider(cssDisposable);
 }
