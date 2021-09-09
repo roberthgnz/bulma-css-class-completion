@@ -19,7 +19,7 @@ export function activate(context: vscode.ExtensionContext) {
       }
 
       const buttonClasses = [
-        "buttton",
+        "button",
         "is-white",
         "is-light",
         "is-dark",
