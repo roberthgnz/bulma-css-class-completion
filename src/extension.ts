@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import classes from "./classes";
+import { globalClasses, classes } from "./classes";
 
 export function activate(context: vscode.ExtensionContext) {
   const provider = vscode.languages.registerCompletionItemProvider("html", {
@@ -19,8 +19,51 @@ export function activate(context: vscode.ExtensionContext) {
         return [];
       }
 
-    
+      const usedClass = new Set();
+
       const completions: vscode.CompletionItem[] = [];
+
+      const createSnippets = (key: string, list: string[]): string => {
+        // remove root class name, create snippet options and return unique selectors
+        const parsed = [
+          ...new Set(
+            list
+              .join("")
+              .replaceAll(`.${key}.`, ".")
+              .replaceAll(".", ",")
+              .slice(1)
+              .split(",")
+          ).values(),
+        ];
+        return `${key} \${1|${parsed}\|}`;
+      };
+
+      const createCompletions = (key: string, modifiers: string[]): void => {
+        modifiers.forEach((className) => {
+          const list = className
+            .replaceAll(`.${key}.`, ".")
+            .split(".")
+            .slice(1);
+          list.forEach((item) => {
+            // prevent creating a completion that already exists
+            if (!usedClass.has(item)) {
+              const completion = new vscode.CompletionItem(
+                item,
+                vscode.CompletionItemKind.Variable
+              );
+              completions.push(completion);
+            } else usedClass.add(item);
+          });
+        });
+      };
+
+      globalClasses.forEach((key) => {
+        const completion = new vscode.CompletionItem(
+          key.replace(".", ""),
+          vscode.CompletionItemKind.Variable
+        );
+        completions.push(completion);
+      });
 
       for (const key in classes) {
         const modifiers: string[] = classes[key];
@@ -28,20 +71,18 @@ export function activate(context: vscode.ExtensionContext) {
           key,
           vscode.CompletionItemKind.Variable
         );
+
         // a completion item that inserts its text as snippet,
         // the `insertText`-property is a `SnippetString` which will be honored by the editor.
         rootCompletion.insertText = new vscode.SnippetString(
-          `${key} \${1|${modifiers.join(",")}\|}`
+          createSnippets(key.replace(".", ""), modifiers)
         );
         completions.push(rootCompletion);
+
         // create completions for class modifiers
-        modifiers.forEach((modifier) => {
-          const completion = new vscode.CompletionItem(
-            modifier,
-            vscode.CompletionItemKind.Variable
-          );
-          completions.push(completion);
-        });
+        if (modifiers.length) {
+          createCompletions(key, modifiers);
+        }
       }
 
       return [...completions];
