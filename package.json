@@ -20,6 +20,9 @@
     "vscode",
     "extension"
   ],
+  "extensionKind": [
+    "ui"
+  ],
   "categories": [
     "Programming Languages",
     "Other"
@@ -33,6 +36,16 @@
     "compile": "tsc -p ./",
     "lint": "eslint . --ext .ts,.tsx",
     "watch": "tsc -watch -p ./"
+  },
+  "contributes": {
+    "configuration": {
+      "title": "Bulma CSS class completion configuration",
+      "bulma-css-class-completion.enable": {
+        "type": "boolean",
+        "description": "Enable/disable Bulma CSS class completion",
+        "default": true
+      }
+    }
   },
   "devDependencies": {
     "@types/node": "12.12.0",
