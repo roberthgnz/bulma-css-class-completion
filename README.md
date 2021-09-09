@@ -12,4 +12,8 @@ If the attribute has a parent class like "card", it will suggest classes based o
 ## Configuration
 This extension can be configured in User Settings or Workspace settings.
 
-`"bulma-css-class-completion.enable": true`
+```
+"bulma-css-class-completion": {
+	bulma-css-class-completion.enabled: true
+}
+```

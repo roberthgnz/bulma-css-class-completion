@@ -21,7 +21,8 @@
     "extension"
   ],
   "extensionKind": [
-    "ui"
+    "ui",
+    "workspace"
   ],
   "categories": [
     "Programming Languages",
@@ -39,11 +40,14 @@
   },
   "contributes": {
     "configuration": {
-      "title": "Bulma CSS class completion configuration",
-      "bulma-css-class-completion.enable": {
-        "type": "boolean",
-        "description": "Enable/disable Bulma CSS class completion",
-        "default": true
+      "type": "object",
+      "title": "bulma-css-class-completion",
+      "properties": {
+        "bulma-css-class-completion.enable": {
+          "type": "boolean",
+          "description": "Enable/disable Bulma CSS class completion",
+          "default": true
+        }
       }
     }
   },
