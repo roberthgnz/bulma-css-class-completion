@@ -1,6 +1,8 @@
 # Bulma CSS Class Completion
 Visual Studio Code extension that provides CSS class name completion for the HTML class attribute based on Bulma CSS classes.
 
+> 🚧 Work in progress (in low priority, contributions welcome!).
+
 ## Why use it?
 Completion based on the parent class. Your workflow will be faster and you will avoid the headache of searching for all available classes.
 
