@@ -33,11 +33,10 @@
   ],
   "main": "./out/extension.js",
   "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "lint": "eslint . --ext .ts,.tsx",
-    "watch": "tsc -watch -p ./",
-    "release": "bumpp --tag --push --commit"
+    "vscode:prepublish": "npm run compile -- --minify",
+    "compile": "esbuild ./src/extension.ts --bundle --outdir=out --external:vscode --format=cjs --platform=node",
+    "dev": "npm run compile -- --sourcemap",
+    "watch": "npm run dev -- --sourcemap --watch"
   },
   "contributes": {
     "configuration": {
@@ -57,7 +56,7 @@
     "@types/vscode": "1.32.0",
     "@typescript-eslint/eslint-plugin": "4.16.0",
     "@typescript-eslint/parser": "4.16.0",
-    "bumpp": "^7.1.1",
+    "esbuild": "^0.12.26",
     "eslint": "7.21.0",
     "typescript": "4.3.5"
   }
