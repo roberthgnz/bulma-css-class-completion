@@ -27,17 +27,15 @@ function registerProvider(disposables: vscode.Disposable[]) {
 
         const completions = new Map<string, vscode.CompletionItem>();
 
-        const createCompletionsChilds = (
-          key: string,
-          modifiers: string[]
-        ): void => {
+        const createCompletionsChilds = (modifiers: string[]): void => {
           modifiers.forEach((className) => {
-            const list = className
-              .replaceAll(`.${key}.`, ".")
-              .split(".")
-              .slice(1);
+            const list = className.split(".").slice(1);
+            /* 
+            TODO: if class it's .card-header-title.is-centered
+            * a snippet is created for card-header-title
+            * otherwise just register the completion 
+            * */
             list.forEach((item) => {
-              // prevent creating a completion that already exists
               const completion = new vscode.CompletionItem(
                 item,
                 vscode.CompletionItemKind.Variable
@@ -49,13 +47,12 @@ function registerProvider(disposables: vscode.Disposable[]) {
 
         const createCompletions = (
           targetClass: string,
-          onlyChild: boolean = false
+          onlyChilds: boolean = false
         ) => {
-          if (onlyChild) {
-            const modifiers: string[] = classes[targetClass];
-            createCompletionsChilds(targetClass, modifiers);
+          const modifiers: string[] = classes[targetClass];
+          if (onlyChilds) {
+            createCompletionsChilds(modifiers);
           } else {
-            const modifiers: string[] = classes[targetClass];
             const rootCompletion = completions.get(targetClass);
 
             rootCompletion.insertText = new vscode.SnippetString(
@@ -67,17 +64,11 @@ function registerProvider(disposables: vscode.Disposable[]) {
         };
 
         const createSnippets = (key: string, list: string[]): string => {
-          // remove root class name, create snippet options and return unique selectors
           const parsed = [
             ...new Set(
-              list
-                .join("")
-                .replaceAll(`.${key}.`, ".")
-                .replaceAll(".", ",")
-                .slice(1)
-                .split(",")
-            ).values(),
-          ];
+              list.join("").replaceAll(`.${key}.`, ".").split(".").slice(1)
+            ),
+          ].join(",");
           return `${key} \${1|${parsed}\|}`;
         };
 
