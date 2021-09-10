@@ -27,6 +27,45 @@ function registerProvider(disposables: vscode.Disposable[]) {
 
         const completions = new Map<string, vscode.CompletionItem>();
 
+        const createCompletionsChilds = (
+          key: string,
+          modifiers: string[]
+        ): void => {
+          modifiers.forEach((className) => {
+            const list = className
+              .replaceAll(`.${key}.`, ".")
+              .split(".")
+              .slice(1);
+            list.forEach((item) => {
+              // prevent creating a completion that already exists
+              const completion = new vscode.CompletionItem(
+                item,
+                vscode.CompletionItemKind.Variable
+              );
+              completions.set(item, completion);
+            });
+          });
+        };
+
+        const createCompletions = (
+          targetClass: string,
+          onlyChild: boolean = false
+        ) => {
+          if (onlyChild) {
+            const modifiers: string[] = classes[targetClass];
+            createCompletionsChilds(targetClass, modifiers);
+          } else {
+            const modifiers: string[] = classes[targetClass];
+            const rootCompletion = completions.get(targetClass);
+
+            rootCompletion.insertText = new vscode.SnippetString(
+              createSnippets(targetClass, modifiers)
+            );
+
+            completions.set(targetClass, rootCompletion);
+          }
+        };
+
         const createSnippets = (key: string, list: string[]): string => {
           // remove root class name, create snippet options and return unique selectors
           const parsed = [
@@ -42,30 +81,13 @@ function registerProvider(disposables: vscode.Disposable[]) {
           return `${key} \${1|${parsed}\|}`;
         };
 
-        // const createCompletions = (key: string, modifiers: string[]): void => {
-        //   modifiers.forEach((className) => {
-        //     const list = className
-        //       .replaceAll(`.${key}.`, ".")
-        //       .split(".")
-        //       .slice(1);
-        //     list.forEach((item) => {
-        //       // prevent creating a completion that already exists
-        //       const completion = new vscode.CompletionItem(
-        //         item,
-        //         vscode.CompletionItemKind.Variable
-        //       );
-        //       completions.push(completion);
-        //     });
-        //   });
-        // };
-
-        // globalClasses.forEach((key) => {
-        //   const completion = new vscode.CompletionItem(
-        //     key.replace(".", ""),
-        //     vscode.CompletionItemKind.Variable
-        //   );
-        //   completions.push(completion);
-        // });
+        globalClasses.forEach((key) => {
+          const completion = new vscode.CompletionItem(
+            key.replace(".", ""),
+            vscode.CompletionItemKind.Variable
+          );
+          completions.set(key.replace(".", ""), completion);
+        });
 
         // create root class completions
         for (const key in classes) {
@@ -76,61 +98,31 @@ function registerProvider(disposables: vscode.Disposable[]) {
           completions.set(key, rootCompletion);
         }
 
-        // check if it's a root class exists, return the last part of the class name
         const className = rawClasses[1].split(" ").pop();
 
         if (!className.length) {
           return [];
         }
 
-        // targetClass if the key with more coincidences in the class attribute
+        // check if the class contains a -, if so, we need to filter the classes
+        if (className.match(/[a-z]{1,}-{1}/)) {
+          // create root class completions
+          const rootClass = className
+            .match(/[a-z]{1,}-{1}/)[0]
+            .replace("-", "");
+
+          createCompletions(rootClass, true);
+
+          disposables.push(provider);
+
+          return [...completions.values()];
+        }
+
         const targetClass = Object.keys(classes).find((key) => {
-          const classes = rawClasses[1].split(" ");
-          // if the classes has more than one class, check if the class name is in the list
-          if (classes.length > 1) {
-            const prev = classes[classes.length - 1];
-            return key.startsWith(className) && key !== prev;
-          }
           return key.startsWith(className);
         });
 
-        if (targetClass) {
-          const modifiers: string[] = classes[targetClass];
-          const rootCompletion = completions.get(targetClass);
-
-          // a completion item that inserts its text as snippet,
-          // the `insertText`-property is a `SnippetString` which will be honored by the editor.
-          rootCompletion.insertText = new vscode.SnippetString(
-            createSnippets(targetClass, modifiers)
-          );
-
-          // set the updated completion item
-          completions.set(targetClass, rootCompletion);
-
-          // if (modifiers.length) {
-          //   createCompletions(className, classes[className]);
-          // }
-        }
-
-        // for (const key in classes) {
-        //   const modifiers: string[] = classes[key];
-        //   const rootCompletion = new vscode.CompletionItem(
-        //     key,
-        //     vscode.CompletionItemKind.Variable
-        //   );
-
-        //   // a completion item that inserts its text as snippet,
-        //   // the `insertText`-property is a `SnippetString` which will be honored by the editor.
-        //   rootCompletion.insertText = new vscode.SnippetString(
-        //     createSnippets(key.replace(".", ""), modifiers)
-        //   );
-        //   completions.push(rootCompletion);
-
-        //   // create completions for class modifiers
-        //   if (modifiers.length) {
-        //     createCompletions(key, modifiers);
-        //   }
-        // }
+        createCompletions(targetClass);
 
         disposables.push(provider);
 
