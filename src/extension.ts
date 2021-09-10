@@ -96,10 +96,6 @@ function registerProvider(disposables: vscode.Disposable[]) {
 
         const className = rawClasses[1].split(" ").pop();
 
-        if (!className.length) {
-          return [];
-        }
-
         // check if the class contains a -, if so, we need to filter the classes
         if (className.match(/[a-z]{1,}-{1}/)) {
           // create root class completions
