@@ -82,11 +82,16 @@ function registerProvider(disposables: vscode.Disposable[]) {
         };
 
         globalClasses.forEach((key) => {
-          const completion = new vscode.CompletionItem(
-            key.replace(".", ""),
-            vscode.CompletionItemKind.Variable
-          );
-          completions.set(key.replace(".", ""), completion);
+          const keyClasses = key.split(".").slice(1);
+          keyClasses.forEach((kc) => {
+            if (!completions.has(kc)) {
+              const completion = new vscode.CompletionItem(
+                kc,
+                vscode.CompletionItemKind.Variable
+              );
+              completions.set(kc, completion);
+            }
+          });
         });
 
         // create root class completions
