@@ -1,7 +1,7 @@
 {
   "name": "bulma-css-class-completion",
   "displayName": "Bulma CSS Class Completion",
-  "description": "Visual Studio Code extension that provides CSS class name completion for the HTML class attribute based on Bulma CSS classes.",
+  "description": "Provides CSS class name completion for the HTML class attribute based on Bulma CSS classes.",
   "version": "0.1.8",
   "publisher": "reliutg",
   "icon": "icon.png",
