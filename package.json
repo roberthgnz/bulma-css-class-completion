@@ -35,9 +35,14 @@
   "scripts": {
     "vscode:prepublish": "npm run compile -- --minify",
     "compile": "esbuild ./src/extension.ts --bundle --outdir=out --external:vscode --format=cjs --platform=node",
+    "watch": "npm run dev -- --sourcemap --watch",
     "dev": "npm run compile -- --sourcemap",
-    "lint": "eslint . --ext .ts",
-    "watch": "npm run dev -- --sourcemap --watch"
+    "lint": "eslint --fix src/**.ts",
+    "format": "prettier --write \"src/**.ts\"",
+    "prepublishOnly": "npm run lint",
+    "preversion": "npm run lint",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags"
   },
   "contributes": {
     "configuration": {
@@ -59,6 +64,9 @@
     "@typescript-eslint/parser": "^4.32.0",
     "esbuild": "^0.13.2",
     "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.4.1",
     "typescript": "4.4.3"
   }
 }
