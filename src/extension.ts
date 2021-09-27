@@ -47,7 +47,7 @@ function registerProvider(disposables: vscode.Disposable[]) {
 
         const createCompletions = (
           targetClass: string,
-          onlyChilds: boolean = false
+          onlyChilds = false
         ) => {
           const modifiers: string[] = classes[targetClass];
           if (onlyChilds) {
@@ -69,7 +69,7 @@ function registerProvider(disposables: vscode.Disposable[]) {
               list.join("").replaceAll(`.${key}.`, ".").split(".").slice(1)
             ),
           ].join(",");
-          return `${key} \${1|${parsed}\|}`;
+          return `${key} \${1|${parsed}|}`;
         };
 
         globalClasses.forEach((key) => {

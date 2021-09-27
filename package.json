@@ -36,6 +36,7 @@
     "vscode:prepublish": "npm run compile -- --minify",
     "compile": "esbuild ./src/extension.ts --bundle --outdir=out --external:vscode --format=cjs --platform=node",
     "dev": "npm run compile -- --sourcemap",
+    "lint": "eslint . --ext .ts",
     "watch": "npm run dev -- --sourcemap --watch"
   },
   "contributes": {
@@ -54,10 +55,10 @@
   "devDependencies": {
     "@types/node": "16.10.1",
     "@types/vscode": "1.47.0",
-    "@typescript-eslint/eslint-plugin": "4.32.0",
-    "@typescript-eslint/parser": "4.32.0",
+    "@typescript-eslint/eslint-plugin": "^4.32.0",
+    "@typescript-eslint/parser": "^4.32.0",
     "esbuild": "^0.13.2",
-    "eslint": "7.32.0",
+    "eslint": "^7.32.0",
     "typescript": "4.4.3"
   }
 }
