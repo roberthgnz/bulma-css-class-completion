@@ -1,13 +1,17 @@
 import * as vscode from 'vscode'
 import { globalClasses, classes } from './classes'
 
-const cssDisposable: vscode.Disposable[] = []
-const configuration = 'bulma-css-class-completion.enabled'
+const htmlDisposables: vscode.Disposable[] = []
+const jsDisposables: vscode.Disposable[] = []
+const configuration = {
+  html: 'bulma-css-class-completion.HTMLLanguages',
+  js: 'bulma-css-class-completion.JavaScriptLanguages'
+}
 const completionTriggerChars = ['"', "'", ' ', '.']
 
-function registerProvider(disposables: vscode.Disposable[]) {
+function registerProvider(disposables: vscode.Disposable[], language: string) {
   const provider = vscode.languages.registerCompletionItemProvider(
-    'html',
+    language,
     {
       provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
         const start: vscode.Position = new vscode.Position(position.line, 0)
@@ -107,9 +111,27 @@ function registerProvider(disposables: vscode.Disposable[]) {
   )
 }
 
-function unregisterProvider(disposables: vscode.Disposable[]) {
+function unregisterProviders(disposables: vscode.Disposable[]) {
   disposables.forEach((disposable) => disposable.dispose())
   disposables.length = 0
+}
+
+function registerHTMLProviders(disposables: vscode.Disposable[]) {
+  vscode.workspace
+    .getConfiguration()
+    .get<string[]>(configuration.html)
+    .forEach((language) => {
+      registerProvider(disposables, language)
+    })
+}
+
+function registerJavascriptProviders(disposables: vscode.Disposable[]) {
+  vscode.workspace
+    .getConfiguration()
+    .get<string[]>(configuration.js)
+    .forEach((language) => {
+      registerProvider(disposables, language)
+    })
 }
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
@@ -117,20 +139,26 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   vscode.workspace.onDidChangeConfiguration(
     async (e) => {
-      if (e.affectsConfiguration(configuration)) {
-        const isEnabled = vscode.workspace.getConfiguration().get<string>(configuration)
-        isEnabled ? registerProvider(cssDisposable) : unregisterProvider(cssDisposable)
+      if (e.affectsConfiguration(configuration.html)) {
+        unregisterProviders(htmlDisposables)
+        registerHTMLProviders(htmlDisposables)
+      }
+      if (e.affectsConfiguration(configuration.js)) {
+        unregisterProviders(jsDisposables)
+        registerJavascriptProviders(jsDisposables)
       }
     },
     null,
     disposables
   )
 
-  registerProvider(cssDisposable)
-
   context.subscriptions.push(...disposables)
+
+  registerHTMLProviders(htmlDisposables)
+  registerJavascriptProviders(jsDisposables)
 }
 
 export function deactivate(): void {
-  unregisterProvider(cssDisposable)
+  unregisterProviders(htmlDisposables)
+  unregisterProviders(jsDisposables)
 }

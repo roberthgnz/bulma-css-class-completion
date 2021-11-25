@@ -47,13 +47,26 @@
   },
   "contributes": {
     "configuration": {
-      "type": "object",
-      "title": "bulma-css-class-completion",
+      "title": "Bulma CSS Class Completion",
       "properties": {
-        "bulma-css-class-completion.enabled": {
-          "type": "boolean",
-          "description": "Enable/disable Bulma CSS Class Completion",
-          "default": true
+        "bulma-css-class-completion.HTMLLanguages": {
+          "type": "array",
+          "description": "Enable/disable Bulma CSS Class Completion for HTML based languages",
+          "default": [
+            "html",
+            "vue",
+            "php"
+          ]
+        },
+        "bulma-css-class-completion.JavaScriptLanguages": {
+          "type": "array",
+          "description": "Enable/disable Bulma CSS Class Completion for JavaScript based languages",
+          "default": [
+            "javascript",
+            "javascriptreact",
+            "typescript",
+            "typescriptreact"
+          ]
         }
       }
     }
