@@ -14,7 +14,8 @@ function registerProvider(disposables: vscode.Disposable[]) {
         const range: vscode.Range = new vscode.Range(start, position)
         const text: string = document.getText(range)
 
-        const classMatchRegex = /class=["|']([\w- ]*$)/
+        // Match with class or className
+        const classMatchRegex = /[class|className]=["|']([\w- ]*$)/
 
         // Check if the cursor is on a class attribute and retrieve all the css rules in this class attribute
         const rawClasses: RegExpMatchArray | null = text.match(classMatchRegex)
