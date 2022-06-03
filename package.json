@@ -8,7 +8,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/eliut505/bulma-css-class-completion"
+    "url": "https://github.com/eliutdev/bulma-css-class-completion"
   },
   "engines": {
     "vscode": "^1.62.0"
