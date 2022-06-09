@@ -687,7 +687,8 @@ const flexboxHelpers = [
   '.is-flex-shrink-2',
   '.is-flex-shrink-3',
   '.is-flex-shrink-4',
-  '.is-flex-shrink-5']
+  '.is-flex-shrink-5'
+]
 
 const sizing = [
   '.are-large',
