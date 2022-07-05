@@ -7,7 +7,6 @@ const configuration = {
   html: 'bulma-css-class-completion.HTMLLanguages',
   js: 'bulma-css-class-completion.JavaScriptLanguages'
 }
-const completionTriggerChars = ['"', "'", ' ', '.']
 
 function registerProvider(disposables: vscode.Disposable[], language: string) {
   const provider = vscode.languages.registerCompletionItemProvider(
@@ -19,7 +18,7 @@ function registerProvider(disposables: vscode.Disposable[], language: string) {
         const text: string = document.getText(range)
 
         // Match with class or className
-        const classMatchRegex = /[class|className]=["|']([\w- ]*$)/
+        const classMatchRegex = /[class|className]=["|']([\w\- ]*)["|']?$/
 
         // Check if the cursor is on a class attribute and retrieve all the css rules in this class attribute
         const rawClasses: RegExpMatchArray | null = text.match(classMatchRegex)
@@ -29,36 +28,6 @@ function registerProvider(disposables: vscode.Disposable[], language: string) {
 
         const completions = new Map<string, vscode.CompletionItem>()
 
-        const createCompletionsChilds = (modifiers: string[]): void => {
-          modifiers.forEach((className) => {
-            const list = className.split('.').slice(1)
-            /* 
-            TODO: if class it's .card-header-title.is-centered
-            * a snippet is created for card-header-title
-            * otherwise just register the completion 
-            * */
-            list.forEach((item) => {
-              const completion = new vscode.CompletionItem(item, vscode.CompletionItemKind.Variable)
-              completions.set(item, completion)
-            })
-          })
-        }
-
-        const createCompletions = (targetClass: string, onlyChilds = false) => {
-          const modifiers: string[] = classes[targetClass]
-          if (onlyChilds) {
-            createCompletionsChilds(modifiers)
-          } else {
-            const rootCompletion = completions.get(targetClass)
-
-            rootCompletion.insertText = new vscode.SnippetString(
-              createSnippets(targetClass, modifiers)
-            )
-
-            completions.set(targetClass, rootCompletion)
-          }
-        }
-
         const createSnippets = (key: string, list: string[]): string => {
           const parsed = [
             ...new Set(list.join('').replaceAll(`.${key}.`, '.').split('.').slice(1))
@@ -66,48 +35,54 @@ function registerProvider(disposables: vscode.Disposable[], language: string) {
           return `${key} \${1|${parsed}|}`
         }
 
-        globalClasses.forEach((key) => {
-          const keyClasses = key.split('.').slice(1)
-          keyClasses.forEach((kc) => {
-            if (!completions.has(kc)) {
-              const completion = new vscode.CompletionItem(kc, vscode.CompletionItemKind.Variable)
-              completions.set(kc, completion)
+        const createCompletionsChilds = (targetClass: string): void => {
+          const list = [...new Set(targetClass.split('.').slice(1))]
+          list.forEach((item) => {
+            if (!completions.has(item)) {
+              const completion = new vscode.CompletionItem(item, vscode.CompletionItemKind.Variable)
+              completions.set(item, completion)
             }
           })
+        }
+
+        const createCompletions = (targetClass: string) => {
+          const rootCompletion =
+            completions.get(targetClass) ||
+            new vscode.CompletionItem(targetClass, vscode.CompletionItemKind.Variable)
+
+          const modifiers = classes[targetClass]
+          if (modifiers) {
+            rootCompletion.filterText = targetClass
+            rootCompletion.insertText = new vscode.SnippetString(
+              createSnippets(targetClass, modifiers)
+            )
+            // Generate completions for each modifier
+            modifiers.forEach((modifier) => {
+              const hasChilds = modifier.split('.').length > 2
+              if (hasChilds) {
+                createCompletionsChilds(modifier)
+              }
+            })
+          }
+
+          completions.set(targetClass, rootCompletion)
+        }
+
+        globalClasses.forEach((key) => {
+          const label = key.split('.')[1]
+          createCompletions(label)
         })
 
-        // create root class completions
         for (const key in classes) {
-          const rootCompletion = new vscode.CompletionItem(key, vscode.CompletionItemKind.Variable)
-          completions.set(key, rootCompletion)
+          createCompletions(key)
         }
-
-        const className = rawClasses[1].split(' ').pop()
-
-        // check if the class contains a -, if so, we need to filter the classes
-        if (className.match(/[a-z]{1,}-{1}/)) {
-          // create root class completions
-          const rootClass = className.match(/[a-z]{1,}-{1}/)[0].replace('-', '')
-
-          createCompletions(rootClass, true)
-
-          disposables.push(provider)
-
-          return [...completions.values()]
-        }
-
-        const targetClass = Object.keys(classes).find((key) => {
-          return key.startsWith(className)
-        })
-
-        createCompletions(targetClass)
 
         disposables.push(provider)
 
         return [...completions.values()]
       }
     },
-    ...completionTriggerChars
+    '\\w+|-'
   )
 }
 
