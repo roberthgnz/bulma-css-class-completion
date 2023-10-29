@@ -1,5 +1,6 @@
 import * as vscode from 'vscode'
 import { globalClasses, classes } from './classes'
+import { registerSelectionStyle } from './selection'
 
 const htmlDisposables: vscode.Disposable[] = []
 const jsDisposables: vscode.Disposable[] = []
@@ -8,7 +9,7 @@ const configuration = {
   js: 'bulma-css-class-completion.JavaScriptLanguages'
 }
 
-function registerProvider(disposables: vscode.Disposable[], language: string) {
+function registerCompletionProvider(disposables: vscode.Disposable[], language: string) {
   const provider = vscode.languages.registerCompletionItemProvider(
     language,
     {
@@ -86,6 +87,17 @@ function registerProvider(disposables: vscode.Disposable[], language: string) {
   )
 }
 
+function registerHoverProvider(disposables: vscode.Disposable[], language: string) {
+  const provider = vscode.languages.registerHoverProvider(language, {
+    provideHover(document, position): vscode.ProviderResult<vscode.Hover> {
+      const contents = registerSelectionStyle(document, position)
+      return { contents }
+    }
+  })
+
+  disposables.push(provider)
+}
+
 function unregisterProviders(disposables: vscode.Disposable[]) {
   disposables.forEach((disposable) => disposable.dispose())
   disposables.length = 0
@@ -96,7 +108,8 @@ function registerHTMLProviders(disposables: vscode.Disposable[]) {
     .getConfiguration()
     .get<string[]>(configuration.html)
     .forEach((language) => {
-      registerProvider(disposables, language)
+      registerHoverProvider(disposables, language)
+      registerCompletionProvider(disposables, language)
     })
 }
 
@@ -105,7 +118,8 @@ function registerJavascriptProviders(disposables: vscode.Disposable[]) {
     .getConfiguration()
     .get<string[]>(configuration.js)
     .forEach((language) => {
-      registerProvider(disposables, language)
+      registerHoverProvider(disposables, language)
+      registerCompletionProvider(disposables, language)
     })
 }
 
