@@ -3,7 +3,7 @@
   "displayName": "Bulma CSS Class Completion",
   "description": "Provides CSS class name completion for the HTML class attribute based on Bulma CSS classes.",
   "version": "0.6.0",
-  "publisher": "roberthgnz",
+  "publisher": "roberth",
   "icon": "icon.png",
   "license": "MIT",
   "repository": {
