@@ -1,6 +1,6 @@
-[![Marketplace](https://img.shields.io/visual-studio-marketplace/i/reliutg.bulma-css-class-completion)](https://marketplace.visualstudio.com/items?itemName=reliutg.bulma-css-class-completion)
-[![Github](https://img.shields.io/github/stars/eliutdev/bulma-css-class-completion?style=social)](https://github.com/eliutdev/bulma-css-class-completion)
-[![Twitter](https://img.shields.io/twitter/follow/eliutdev?style=social)](https://twitter.com/eliutdev)
+[![Marketplace](https://img.shields.io/visual-studio-marketplace/i/roberthgnz.bulma-css-class-completion)](https://marketplace.visualstudio.com/items?itemName=roberthgnz.bulma-css-class-completion)
+[![Github](https://img.shields.io/github/stars/roberthgnz/bulma-css-class-completion?style=social)](https://github.com/roberthgnz/bulma-css-class-completion)
+[![Twitter](https://img.shields.io/twitter/follow/roberthgnz?style=social)](https://twitter.com/roberthgnz)
 [![buymeacoffee](https://img.shields.io/badge/buymeacoffee-%24-yellow)](https://www.buymeacoffee.com/eliut505)
 
 # Bulma CSS Class Completion
