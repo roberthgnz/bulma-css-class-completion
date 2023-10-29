@@ -29,7 +29,7 @@
     "Other"
   ],
   "activationEvents": [
-    "*"
+    "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "browser": "./out/extension.js",
@@ -80,7 +80,11 @@
     "eslint": "8.52.0",
     "eslint-config-prettier": "9.0.0",
     "eslint-plugin-prettier": "5.0.1",
-    "prettier": "3.0.3",
+    "prettier": "2.8.8",
     "typescript": "5.2.2"
+  },
+  "dependencies": {
+    "bulma": "^0.9.4",
+    "css": "^3.0.0"
   }
 }
