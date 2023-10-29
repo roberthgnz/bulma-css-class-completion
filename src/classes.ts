@@ -788,7 +788,6 @@ const titleAndSubtitle = ['.subtitle', '.title']
 export const globalClasses = [
   ...box,
   ...colors,
-  ...colors,
   ...display,
   ...forms,
   ...grid,
