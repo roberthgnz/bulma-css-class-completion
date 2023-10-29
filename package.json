@@ -3,15 +3,15 @@
   "displayName": "Bulma CSS Class Completion",
   "description": "Provides CSS class name completion for the HTML class attribute based on Bulma CSS classes.",
   "version": "0.3.2",
-  "publisher": "reliutg",
+  "publisher": "roberthgnz",
   "icon": "icon.png",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/eliutdev/bulma-css-class-completion"
+    "url": "https://github.com/roberthgnz/bulma-css-class-completion"
   },
   "engines": {
-    "vscode": "^1.62.0"
+    "vscode": "^1.8.0"
   },
   "keywords": [
     "css",
@@ -72,15 +72,15 @@
     }
   },
   "devDependencies": {
-    "@types/node": "16.11.10",
-    "@types/vscode": "1.62.0",
-    "@typescript-eslint/eslint-plugin": "5.27.1",
-    "@typescript-eslint/parser": "5.27.1",
-    "esbuild": "0.14.43",
-    "eslint": "8.17.0",
-    "eslint-config-prettier": "8.5.0",
-    "eslint-plugin-prettier": "4.0.0",
-    "prettier": "2.6.2",
-    "typescript": "4.7.3"
+    "@types/node": "20.8.9",
+    "@types/vscode": "1.83.1",
+    "@typescript-eslint/eslint-plugin": "6.9.0",
+    "@typescript-eslint/parser": "6.9.0",
+    "esbuild": "0.19.5",
+    "eslint": "8.52.0",
+    "eslint-config-prettier": "9.0.0",
+    "eslint-plugin-prettier": "5.0.1",
+    "prettier": "3.0.3",
+    "typescript": "5.2.2"
   }
 }
