@@ -1,14 +1,8 @@
-import fs from 'fs'
 import css from 'css'
+import bulmaCSS from 'bulma/css/bulma.css'
 
 export const getBulmaCSSContent = () => {
-  const bulmaCSS = fs.readFileSync(require.resolve('bulma/css/bulma.css'), {
-    encoding: 'utf-8'
-  })
-
-  const parsed = css.parse(bulmaCSS)
-
-  return parsed
+  return css.parse(bulmaCSS)
 }
 
 export const getDeclaration = (css: css.Stylesheet, className: string) => {
